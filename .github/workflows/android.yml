@@ -1,4 +1,4 @@
-: Build Salman Jungle Adventure
+name: Build Salman Jungle Adventure
 on:
   workflow_dispatch:
   push:
