@@ -1,0 +1,38 @@
+: Build Salman Jungle Adventure
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Unpack Android project ZIP
+        run: unzip -q Salman_Jungle_Adventure_Android_Project.zip
+      - name: Build debug APK and release AAB
+        working-directory: JungleAdventureAndroid
+        run: gradle --no-daemon assembleDebug bundleRelease
+      - name: Upload APK and AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: salman-jungle-adventure-build
+          path: |
+            JungleAdventureAndroid/app/build/outputs/apk/debug/*.apk
+            JungleAdventureAndroid/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
